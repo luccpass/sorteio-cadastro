@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="stylesheet" href="./src/styles/style.css">
+        
+        <title>Cadastrar Participantes</title>
+
+    </head>
+
+    <body>
+
+        <div id="container">
+
+            <header>
+                <img src="./src/assets/iasd-logo.png" alt="logo igreja adventista do setimo dia">
+            </header>
+
+            <div class="user-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Nome Completo</th>
+                            <th scope="col">Data</th>
+                        </tr>
+                        
+                    </thead>
+                    <tbody id="table-body"></tbody>>
+                        <!--
+                            <tr>
+                            <th scope="row">Lucas Passos</th>
+                            <td>23/03/2024</td>
+                        </tr>
+                        -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="btn-wrapper">
+                <button id="exportar-participantes">
+                    Exportar Participantes
+                </button>
+                <button onclick="window.location.href='index.html'">
+                    Pagina Inicial
+                </button>
+            </div>
+
+        </div>
+        
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+            // Função para renderizar os participantes na tabela
+            function renderizarParticipantes() {
+                var participantes = JSON.parse(localStorage.getItem('participantes')) || [];
+                var tbody = document.getElementById('table-body');
+
+                // Verificar se tbody existe
+                if (!tbody) {
+                    console.error("Elemento tbody não encontrado.");
+                    return;
+                }
+
+                // Limpar a tabela
+                tbody.innerHTML = '';
+
+                // Adicionar participantes à tabela
+                participantes.forEach(function (participante, index) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = '<td class="editable" contenteditable="true" data-index="' + index + '">' + participante.nome + '</td>' +
+                        '<td>' + participante.data + '</td>' +
+                        '<td><button class="delete-button" data-index="' + index + '">Excluir</button></td>'; // Adicionado botão de exclusão
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Chamada inicial para renderizar participantes
+            renderizarParticipantes();
+
+            // Adicionar evento de clique para exportar participantes
+            document.getElementById('exportar-participantes').addEventListener('click', function () {
+                var participantes = JSON.parse(localStorage.getItem('participantes')) || [];
+                var data = JSON.stringify(participantes);
+                var blob = new Blob([data], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'participantes.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // Adicionar evento de clique para permitir edição do nome
+            document.getElementById('table-body').addEventListener('input', function (event) {
+                if (event.target.classList.contains('editable')) {
+                    var index = event.target.getAttribute('data-index');
+                    var participantes = JSON.parse(localStorage.getItem('participantes')) || [];
+                    participantes[index].nome = event.target.textContent.trim();
+                    localStorage.setItem('participantes', JSON.stringify(participantes));
+                }
+            });
+
+            // Adicionar evento de clique para exclusão de participante
+            document.getElementById('table-body').addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-button')) {
+                    var index = event.target.getAttribute('data-index');
+                    var participantes = JSON.parse(localStorage.getItem('participantes')) || [];
+                    participantes.splice(index, 1); // Remove o participante do array
+                    localStorage.setItem('participantes', JSON.stringify(participantes)); // Atualiza o armazenamento local
+                    renderizarParticipantes(); // Renderiza a tabela novamente
+                }
+            });
+        });
+        </script>
+
+    </body>
+</html>

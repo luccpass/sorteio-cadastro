@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="stylesheet" href="./src/styles/style.css">
+        
+        <title>Cadastrar Participantes</title>
+
+    </head>
+
+    <body>
+
+        <div id="container">
+
+            <header>
+                <img src="./src/assets/iasd-logo.png" alt="logo igreja adventista do setimo dia">
+            </header>
+
+            <div class="main-content">
+                <div class="main-content-input-container">
+                    <label for="input-nome">Nome e Sobrenome</label>
+                    <div class="input-wrapper">
+                        <input id="input-nome" type="text" required placeholder="Nome e Sobrenome">
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-wrapper">
+                <button id="cadastrar-participante">
+                    Cadastrar Participante
+                </button>
+                <button onclick="window.location.href='usuarios.html'">
+                    Ver Participantes
+                </button>
+            </div>
+
+        </div>
+
+
+        <script>
+
+function criarUsuario() {
+                // Obter o valor do input
+                var nomeCompleto = document.getElementById('input-nome').value;
+    
+                // Obter a data atual
+                var dataAtual = new Date().toLocaleDateString();
+    
+                // Objeto para armazenar o participante
+                var participante = {
+                    nome: nomeCompleto,
+                    data: dataAtual
+                };
+    
+                // Verificar se há participantes no Local Storage
+                var participantes = JSON.parse(localStorage.getItem('participantes')) || [];
+    
+                // Adicionar novo participante à lista
+                participantes.push(participante);
+    
+                // Salvar participantes de volta no Local Storage
+                localStorage.setItem('participantes', JSON.stringify(participantes));
+    
+                // Limpar o input
+                document.getElementById('input-nome').value = '';
+            }
+
+            document.getElementById('cadastrar-participante').addEventListener('click', criarUsuario);
+            document.getElementById('input-nome').addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') {
+                    criarUsuario()
+                }
+            });
+        </script>
+    </body>
+</html>
